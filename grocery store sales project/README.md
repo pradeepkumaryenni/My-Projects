@@ -1,17 +1,27 @@
-Store Sales Performance Analysis Dashboard
-This Power BI project provides an interactive dashboard to analyze and monitor store sales performance. The dashboard delivers insights into various KPIs such as sales growth, product performance, and customer behavior. It is designed for real-time, data-driven decision-making in sales strategy and inventory management.
+Store Sales Performance Analysis Dashboard:
+
+This Power BI project provides an interactive dashboard to analyze and monitor store sales performance. 
+The dashboard delivers insights into various KPIs such as sales growth, product performance, and customer behavior. 
+It is designed for real-time, data-driven decision-making in sales strategy and inventory management.
 
 Project Overview
-The Store Sales Performance Analysis Dashboard is an end-to-end solution for analyzing store sales and customer data. It leverages Power BI's powerful visualization and DAX capabilities to present critical sales metrics, track performance trends, and segment customers.
+The Store Sales Performance Analysis Dashboard is an end-to-end solution for analyzing store sales and customer data. 
+It leverages Power BI's powerful visualization and DAX capabilities to present critical sales metrics, track performance trends, and segment customers.
 
 Key Features
 KPI Cards: Displays essential KPIs such as total sales, average sales per unit, gross margin, and customer visits.
+
 Time-Based Analysis: Includes Month-over-Month (MoM) and Year-over-Year (YoY) growth calculations to track changes in sales and profit.
+
 Advanced Visualizations: Interactive charts and maps to explore data by brand, region, and store, with top and bottom product listings.
+
 Customer Segmentation: Uses DAX to analyze customer behavior based on purchase frequency, recency, and lifetime value.
+
 Geographical Analysis: A map visual identifies regions with high and low sales, offering insights into regional performance.
+
 Real-Time Insights: Automatic updates with live data to provide stakeholders with the most current performance metrics.
-Data Model
+
+Data Model:
 The data model is based on a snowflake schema, designed for efficiency and fast processing. The key tables include:
 
 f_transactions: Transactional sales data.
