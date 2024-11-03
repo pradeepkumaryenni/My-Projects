@@ -25,12 +25,19 @@ Data Model:
 The data model is based on a snowflake schema, designed for efficiency and fast processing. The key tables include:
 
 f_transactions: Transactional sales data.
+
 f_returns: Data on returned products.
+
 d_customers: Customer demographics and segmentation attributes.
+
 d_products: Product details, including brand and cost.
+
 d_stores: Store location and size information.
+
 d_regions: Sales regions.
+
 d_calendar: Time dimension for date-based analysis.
+
 DAX Measures
 This project includes various DAX measures for enhanced analysis:
 
