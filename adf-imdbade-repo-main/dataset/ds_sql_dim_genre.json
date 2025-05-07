@@ -1,0 +1,47 @@
+{
+	"name": "ds_sql_dim_genre",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_curated_dw",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "GenreSK",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MovieID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "GenreNames",
+				"type": "nvarchar"
+			},
+			{
+				"name": "StartDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "EndDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "IsActive",
+				"type": "bit"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "dim_genre"
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"name": "ds_adls_dummy_dq_output",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_adls_imdbade",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "imdb/dq_output",
+				"fileSystem": "silver"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}

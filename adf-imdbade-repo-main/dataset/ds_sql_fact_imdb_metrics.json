@@ -1,0 +1,78 @@
+{
+	"name": "ds_sql_fact_imdb_metrics",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_curated_dw",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "FactSK",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MovieID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "VoteAverage",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "VoteCount",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Revenue",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "Budget",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "Popularity",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "IMDB_Rating",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "Meta_Score",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "AverageRating",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "ReleaseYear",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LoadDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "fact_imdb_metrics"
+		}
+	}
+}

@@ -1,0 +1,198 @@
+{
+	"name": "PL_Master_Curated_Load",
+	"properties": {
+		"activities": [
+			{
+				"name": "Run_LoadDimMovie",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Log_Job_Start",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_Load_Dim_Movie",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false
+				}
+			},
+			{
+				"name": "Run_LoadDimCast",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Run_LoadDimMovie",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_Load_Dim_Cast",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false
+				}
+			},
+			{
+				"name": "Run_LoadDimGenre",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Run_LoadDimCast",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_Load_Dim_Genre",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false
+				}
+			},
+			{
+				"name": "Run_LoadFactIMDb",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Run_LoadDimGenre",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PL_Load_Fact_IMDb",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": false
+				}
+			},
+			{
+				"name": "Log_Job_Start",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "ls_sql_imdbade",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "INSERT INTO Meta_JobLog (JobName, PipelineName, StartTime, Status)\nVALUES (\n  'Master Curated Load',\n  '@{pipeline().Pipeline}',\n  GETDATE(),\n  'Running'\n)\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Log_Job_End",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Run_LoadFactIMDb",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "ls_sql_imdbade",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "UPDATE Meta_JobLog\nSET EndTime = GETDATE(),\n    Status = 'Success'\nWHERE JobID = (\n  SELECT MAX(JobID) FROM Meta_JobLog WHERE PipelineName = '@{pipeline().Pipeline}'\n)\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Log_job_End_fail",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Run_LoadFactIMDb",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "ls_sql_imdbade",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "UPDATE Meta_JobLog\nSET EndTime = GETDATE(),\n    Status = 'Failed',\n    ErrorMessage = 'Master Pipeline Failed'\nWHERE JobID = (\n  SELECT MAX(JobID) FROM Meta_JobLog WHERE PipelineName = '@{pipeline().Pipeline}'\n)\n"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"annotations": []
+	}
+}

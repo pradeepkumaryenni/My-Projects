@@ -1,0 +1,90 @@
+{
+	"name": "ds_sql_dim_movie",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_curated_dw",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "MovieSK",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MovieID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Title",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OriginalTitle",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Certificate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Homepage",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Status",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ReleaseDate",
+				"type": "date"
+			},
+			{
+				"name": "Runtime",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Tagline",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Overview",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Popularity",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "OverviewSentiment",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "StartDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "EndDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "IsActive",
+				"type": "bit"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "dim_movie"
+		}
+	}
+}

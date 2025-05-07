@@ -1,0 +1,9 @@
+{
+	"name": "adf-imdbade-prod",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "74807e94-37c1-41f3-931b-54f196d17581",
+		"tenantId": "c4fc9b2e-defc-4af5-88ba-7f21e5447bc6"
+	}
+}

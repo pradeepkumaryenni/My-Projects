@@ -1,0 +1,45 @@
+{
+	"name": "ds_sql_MetaDQIssues",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_imdbade",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "DQID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TableName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ColumnName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IssueType",
+				"type": "nvarchar"
+			},
+			{
+				"name": "IssueCount",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CheckDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Meta_DQIssues"
+		}
+	}
+}

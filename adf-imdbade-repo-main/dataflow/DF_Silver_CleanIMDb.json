@@ -1,0 +1,102 @@
+{
+	"name": "DF_Silver_CleanIMDb",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_adls_bronze_imdb_csv",
+						"type": "DatasetReference"
+					},
+					"name": "BronzeIMDbSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_adls_silver_imdb_csv",
+						"type": "DatasetReference"
+					},
+					"name": "WriteToSilver"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FilterValidRows"
+				},
+				{
+					"name": "CleanFields"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          id as integer,",
+				"          title as string,",
+				"          vote_average as double,",
+				"          vote_count as integer,",
+				"          status as string,",
+				"          release_date as date,",
+				"          revenue as long,",
+				"          runtime as short,",
+				"          adult as boolean,",
+				"          backdrop_path as string,",
+				"          budget as integer,",
+				"          homepage as string,",
+				"          imdb_id as string,",
+				"          original_language as string,",
+				"          original_title as string,",
+				"          overview as string,",
+				"          popularity as string,",
+				"          poster_path as string,",
+				"          tagline as string,",
+				"          production_companies as string,",
+				"          production_countries as string,",
+				"          spoken_languages as string,",
+				"          keywords as string,",
+				"          release_year as string,",
+				"          Director as string,",
+				"          AverageRating as string,",
+				"          Poster_Link as string,",
+				"          Certificate as string,",
+				"          IMDB_Rating as string,",
+				"          Meta_score as string,",
+				"          Star1 as string,",
+				"          Star2 as string,",
+				"          Star3 as string,",
+				"          Star4 as string,",
+				"          Writer as string,",
+				"          Director_of_Photography as string,",
+				"          Producers as string,",
+				"          Music_Composer as string,",
+				"          genres_list as string,",
+				"          Cast_list as string,",
+				"          overview_sentiment as string,",
+				"          all_combined_keywords as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> BronzeIMDbSource",
+				"BronzeIMDbSource filter(!isNull(id) && !isNull(title)) ~> FilterValidRows",
+				"FilterValidRows derive(title_clean = trim(title),",
+				"          status_clean = trim(status),",
+				"          genres_clean = trim(genres_list),",
+				"          overview_clean = trim(overview_sentiment),",
+				"          star1_clean = trim(Star1),",
+				"          original_title_clean = trim(original_title),",
+				"          vote_avg_cast = toFloat(vote_average),",
+				"          revenue_cast = toFloat(revenue),",
+				"          budget_cast = toFloat(budget),",
+				"          runtime_cast = toInteger(runtime),",
+				"          release_dt = toTimestamp(release_date)) ~> CleanFields",
+				"CleanFields sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> WriteToSilver"
+			]
+		}
+	}
+}

@@ -1,0 +1,186 @@
+{
+	"name": "DF_Load_Fact_IMDb",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_adls_silver_imdb_csv",
+						"type": "DatasetReference"
+					},
+					"name": "SilverIMDbFactSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_sql_fact_imdb_metrics",
+						"type": "DatasetReference"
+					},
+					"name": "FactCurratedTable"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_fact_imdb_metrics",
+						"type": "DatasetReference"
+					},
+					"name": "WriteToFactIMDBMetrics"
+				}
+			],
+			"transformations": [
+				{
+					"name": "PrepareFactColumns"
+				},
+				{
+					"name": "CreateFactHash"
+				},
+				{
+					"name": "LookupExistingFact"
+				},
+				{
+					"name": "DetectFactInsert"
+				},
+				{
+					"name": "SetFactInsertOnly"
+				},
+				{
+					"name": "SelectFactColumns"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          id as integer,",
+				"          title as string,",
+				"          vote_average as double,",
+				"          vote_count as short,",
+				"          status as string,",
+				"          release_date as date,",
+				"          revenue as integer,",
+				"          runtime as short,",
+				"          adult as boolean,",
+				"          backdrop_path as string,",
+				"          budget as integer,",
+				"          homepage as string,",
+				"          imdb_id as string,",
+				"          original_language as string,",
+				"          original_title as string,",
+				"          overview as string,",
+				"          popularity as string,",
+				"          poster_path as string,",
+				"          tagline as string,",
+				"          production_companies as string,",
+				"          production_countries as string,",
+				"          spoken_languages as string,",
+				"          keywords as string,",
+				"          release_year as string,",
+				"          Director as string,",
+				"          AverageRating as string,",
+				"          Poster_Link as string,",
+				"          Certificate as string,",
+				"          IMDB_Rating as string,",
+				"          Meta_score as string,",
+				"          Star1 as string,",
+				"          Star2 as string,",
+				"          Star3 as string,",
+				"          Star4 as string,",
+				"          Writer as string,",
+				"          Director_of_Photography as string,",
+				"          Producers as string,",
+				"          Music_Composer as string,",
+				"          genres_list as string,",
+				"          Cast_list as string,",
+				"          overview_sentiment as string,",
+				"          all_combined_keywords as string,",
+				"          title_clean as string,",
+				"          status_clean as string,",
+				"          genres_clean as string,",
+				"          overview_clean as string,",
+				"          star1_clean as string,",
+				"          original_title_clean as string,",
+				"          vote_avg_cast as double,",
+				"          revenue_cast as double,",
+				"          budget_cast as double,",
+				"          runtime_cast as short,",
+				"          release_dt as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SilverIMDbFactSource",
+				"source(output(",
+				"          FactSK as integer,",
+				"          MovieID as integer,",
+				"          VoteAverage as double,",
+				"          VoteCount as integer,",
+				"          Revenue as double,",
+				"          Budget as double,",
+				"          Popularity as double,",
+				"          IMDB_Rating as double,",
+				"          Meta_Score as double,",
+				"          AverageRating as double,",
+				"          ReleaseYear as integer,",
+				"          LoadDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> FactCurratedTable",
+				"SilverIMDbFactSource derive(MovieID = toInteger(id),",
+				"          Popularity = toFloat(popularity),",
+				"          IMDB_Rating = toFloat(IMDB_Rating),",
+				"          Meta_Score = toFloat(Meta_score),",
+				"          AverageRating = toFloat(AverageRating),",
+				"          ReleaseYear = toInteger(release_year),",
+				"          LoadDate = currentTimestamp()) ~> PrepareFactColumns",
+				"PrepareFactColumns derive(FactHash = md5(concat(toString(MovieID),'-',toString(LoadDate)))) ~> CreateFactHash",
+				"CreateFactHash, FactCurratedTable lookup(FactHash == FactHash,",
+				"     multiple: false,",
+				"     pickup: 'last',",
+				"     asc(FactCurratedTable@LoadDate, true),",
+				"     broadcast: 'both')~> LookupExistingFact",
+				"LookupExistingFact derive(IsNewFact = iif(isNull(FactHash), true(), false())) ~> DetectFactInsert",
+				"DetectFactInsert alterRow(insertIf(IsNewFact==true())) ~> SetFactInsertOnly",
+				"SetFactInsertOnly select(mapColumn(",
+				"          MovieID = PrepareFactColumns@MovieID,",
+				"          VoteAverage = vote_average,",
+				"          Revenue = SilverIMDbFactSource@revenue,",
+				"          VoteCount = vote_count,",
+				"          Budget = SilverIMDbFactSource@budget,",
+				"          Popularity = PrepareFactColumns@Popularity,",
+				"          IMDB_Rating = PrepareFactColumns@IMDB_Rating,",
+				"          Meta_Score = PrepareFactColumns@Meta_Score,",
+				"          AverageRating = PrepareFactColumns@AverageRating,",
+				"          ReleaseYear = PrepareFactColumns@ReleaseYear,",
+				"          LoadDate = PrepareFactColumns@LoadDate,",
+				"          FactHash",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectFactColumns",
+				"SelectFactColumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          FactSK as integer,",
+				"          MovieID as integer,",
+				"          VoteAverage as double,",
+				"          VoteCount as integer,",
+				"          Revenue as double,",
+				"          Budget as double,",
+				"          Popularity as double,",
+				"          IMDB_Rating as double,",
+				"          Meta_Score as double,",
+				"          AverageRating as double,",
+				"          ReleaseYear as integer,",
+				"          LoadDate as timestamp",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> WriteToFactIMDBMetrics"
+			]
+		}
+	}
+}

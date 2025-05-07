@@ -1,0 +1,25 @@
+{
+	"name": "PL_Ingest_RawToBronze_Trigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "PL_Ingest_RawToBronze",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/raw/blobs/",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/60e8475e-6ce7-4b9a-a5a1-075a9d3dc6a9/resourceGroups/rg-imdbade-prod/providers/Microsoft.Storage/storageAccounts/stgimdbadeprod",
+			"events": [
+				"Microsoft.Storage.BlobCreated",
+				"Microsoft.Storage.BlobDeleted"
+			]
+		}
+	}
+}

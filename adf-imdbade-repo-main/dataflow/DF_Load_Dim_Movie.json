@@ -1,0 +1,113 @@
+{
+	"name": "DF_Load_Dim_Movie",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_dim_cast",
+						"type": "DatasetReference"
+					},
+					"name": "SilverIMDb"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_dim_movie",
+						"type": "DatasetReference"
+					},
+					"name": "WriteToDimMovie"
+				}
+			],
+			"transformations": [
+				{
+					"name": "PrepareMovieColumns"
+				},
+				{
+					"name": "SelectMovieColumns"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          CastSK as integer,",
+				"          Star1 as string,",
+				"          Star2 as string,",
+				"          Star3 as string,",
+				"          Star4 as string,",
+				"          CastList as string,",
+				"          StartDate as timestamp,",
+				"          EndDate as timestamp,",
+				"          IsActive as boolean",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> SilverIMDb",
+				"SilverIMDb derive({ MovieID} = toInteger(id),",
+				"          Title = title_clean,",
+				"          OriginalTitle = original_title_clean,",
+				"          { Certificate} = Certificate,",
+				"          Homepage = homepage,",
+				"          Status = status_clean,",
+				"          { ReleaseDate} = toDate(release_dt),",
+				"          { Runtime} = runtime_cast,",
+				"          Tagline = tagline,",
+				"          Overview = overview_clean,",
+				"          Popularity = toFloat(popularity),",
+				"          OverviewSentiment = toFloat(overview_sentiment),",
+				"          StartDate = currentTimestamp(),",
+				"          EndDate = toTimestamp('9999-12-31'),",
+				"          IsActive = true()) ~> PrepareMovieColumns",
+				"PrepareMovieColumns select(mapColumn(",
+				"          MovieID = { MovieID},",
+				"          Title,",
+				"          OriginalTitle,",
+				"          Certificate,",
+				"          Homepage,",
+				"          Status,",
+				"          { ReleaseDate},",
+				"          { Runtime},",
+				"          Tagline,",
+				"          Overview,",
+				"          Popularity,",
+				"          OverviewSentiment,",
+				"          StartDate,",
+				"          EndDate,",
+				"          IsActive",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> SelectMovieColumns",
+				"SelectMovieColumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          MovieSK as integer,",
+				"          MovieID as integer,",
+				"          Title as string,",
+				"          OriginalTitle as string,",
+				"          Certificate as string,",
+				"          Homepage as string,",
+				"          Status as string,",
+				"          ReleaseDate as date,",
+				"          Runtime as integer,",
+				"          Tagline as string,",
+				"          Overview as string,",
+				"          Popularity as double,",
+				"          OverviewSentiment as double,",
+				"          StartDate as timestamp,",
+				"          EndDate as timestamp,",
+				"          IsActive as boolean",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> WriteToDimMovie"
+			]
+		}
+	}
+}

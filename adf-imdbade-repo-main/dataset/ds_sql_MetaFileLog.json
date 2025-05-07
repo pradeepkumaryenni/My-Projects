@@ -1,0 +1,50 @@
+{
+	"name": "ds_sql_MetaFileLog",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_imdbade",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "FileID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FileName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TableName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FileSizeMB",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "LoadDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "RowCount",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Status",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Meta_FileLog"
+		}
+	}
+}

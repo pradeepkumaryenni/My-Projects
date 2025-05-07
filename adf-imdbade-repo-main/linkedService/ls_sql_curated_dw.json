@@ -1,0 +1,17 @@
+{
+	"name": "ls_sql_curated_dw",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "sql-imdbade-prod.database.windows.net",
+			"database": "imdb_curated_dw",
+			"encrypt": "mandatory",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "prod-server-sql",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQENGQUFBOTBELTcxMUMtNDc4Ni05RTlELTNDODU1NkQ0Rjk0MV80Y2ZhNWU1NS03YjExLTRjYzItYjlhOC0yMmJmZWNiNzJmMmYiDQp9"
+		}
+	}
+}
